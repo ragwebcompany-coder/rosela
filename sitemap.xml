@@ -2,20 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url><loc>https://rosela.gr/</loc><priority>1.0</priority></url>
     <url><loc>https://rosela.gr/projects.html</loc><priority>0.8</priority></url>
-    <url><loc>https://rosela.gr/services.html</loc><priority>0.8</priority></url>
-    <url><loc>https://rosela.gr/areas.html</loc><priority>0.8</priority></url>
     <url><loc>https://rosela.gr/contact.html</loc><priority>0.8</priority></url>
-    <url><loc>https://rosela.gr/athens.html</loc><priority>0.6</priority></url>
-    <url><loc>https://rosela.gr/kifisia.html</loc><priority>0.6</priority></url>
-    <url><loc>https://rosela.gr/kolonaki.html</loc><priority>0.6</priority></url>
-    <url><loc>https://rosela.gr/glyfada.html</loc><priority>0.6</priority></url>
     <url><loc>https://rosela.gr/en/</loc><priority>0.8</priority></url>
     <url><loc>https://rosela.gr/en/projects.html</loc><priority>0.6</priority></url>
-    <url><loc>https://rosela.gr/en/services.html</loc><priority>0.6</priority></url>
-    <url><loc>https://rosela.gr/en/areas.html</loc><priority>0.6</priority></url>
     <url><loc>https://rosela.gr/en/contact.html</loc><priority>0.6</priority></url>
-    <url><loc>https://rosela.gr/en/athens.html</loc><priority>0.4</priority></url>
-    <url><loc>https://rosela.gr/en/kifisia.html</loc><priority>0.4</priority></url>
-    <url><loc>https://rosela.gr/en/kolonaki.html</loc><priority>0.4</priority></url>
-    <url><loc>https://rosela.gr/en/glyfada.html</loc><priority>0.4</priority></url>
 </urlset>
