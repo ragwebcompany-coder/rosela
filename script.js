@@ -6,6 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
       navLinks.classList.toggle('active');
       hamburger.innerHTML = navLinks.classList.contains('active') ? '✕' : '☰';
     });
+    navLinks.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        hamburger.innerHTML = '☰';
+      });
+    });
   }
 
   const header = document.querySelector('.header');

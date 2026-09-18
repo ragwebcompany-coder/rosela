@@ -266,3 +266,17 @@ textarea.form-control { resize: vertical; min-height: 150px; }
 }
 .category-cover.is-empty { background: linear-gradient(135deg, rgba(178,122,77,0.14), rgba(239,231,216,0.04)); }
 .hero h1.hero-statement { font-size: clamp(1.9rem, 3.6vw, 3.1rem); line-height: 1.25; margin: var(--spacing-md) 0 var(--spacing-lg); max-width: 720px; }
+section[id] { scroll-margin-top: 80px; }
+.section-note { max-width: 760px; margin: var(--spacing-xl) auto 0; text-align: center; color: var(--color-text-light); font-size: 1.05rem; }
+.services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--spacing-md); }
+.services-grid .service-item h3 { font-size: 1.3rem; margin-bottom: 0; }
+.contact-intro { color: var(--color-text-light); margin: var(--spacing-md) 0 var(--spacing-lg); max-width: 520px; }
+#contact .contact-list { margin-top: 0; }
+.footer .footer-bottom { border-top: 0; padding-top: 0; }
+@media (max-width: 600px) {
+  .category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+  .category-body { padding: 0.7rem 0.8rem 0.9rem; }
+  .category-grid .service-item h3 { font-size: 1rem; }
+  .category-grid .service-icon { font-size: 1.1rem; margin-bottom: 0.2rem; }
+  .category-meta { font-size: 0.66rem; letter-spacing: 0.03em; }
+}
