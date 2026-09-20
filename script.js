@@ -42,8 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const isGreek = document.documentElement.lang === 'el';
   const t = isGreek
-    ? { close: 'Κλείσιμο', prev: 'Προηγούμενη', next: 'Επόμενη', photos: 'φωτογραφίες' }
-    : { close: 'Close', prev: 'Previous', next: 'Next', photos: 'photos' };
+    ? { close: 'Κλείσιμο', prev: 'Προηγούμενη', next: 'Επόμενη', photos: 'φωτογραφίες', photo: 'φωτογραφία' }
+    : { close: 'Close', prev: 'Previous', next: 'Next', photos: 'photos', photo: 'photo' };
 
   const createDialog = (className, inner) => {
     const el = document.createElement('div');
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return { src: `${base}${slug}/${file}`, thumb: `${base}${slug}/thumbs/${file}`, alt: title };
     });
     folderTitle.textContent = title;
-    folderCount.textContent = `${count} ${t.photos}`;
+    folderCount.textContent = `${count} ${Number(count) === 1 ? t.photo : t.photos}`;
     folderGrid.innerHTML = '';
     photos.forEach((photo, index) => {
       const button = document.createElement('button');
