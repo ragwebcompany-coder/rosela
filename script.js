@@ -56,22 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const categoryCards = Array.from(document.querySelectorAll('.category-card[data-slug]'));
-  if (!categoryCards.length) return;
+  const galleries = Array.from(document.querySelectorAll('[data-gallery]'));
+  if (!categoryCards.length && !galleries.length) return;
 
-  const folder = createDialog('folder-view', `
-    <div class="folder-panel">
-      <div class="folder-head">
-        <div><p class="eyebrow folder-count"></p><h2 class="folder-title"></h2></div>
-        <button class="folder-close" type="button" aria-label="${t.close}">×</button>
-      </div>
-      <div class="folder-grid"></div>
-    </div>
-  `);
-  const folderTitle = folder.querySelector('.folder-title');
-  const folderCount = folder.querySelector('.folder-count');
-  const folderGrid = folder.querySelector('.folder-grid');
-  const folderClose = folder.querySelector('.folder-close');
-
+  // Lightbox (shared by the folder overlay and the in-page galleries)
   const lightbox = createDialog('lightbox', `
     <div class="lightbox-panel">
       <button class="lightbox-close" type="button" aria-label="${t.close}">×</button>
@@ -87,8 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let photos = [];
   let activeIndex = 0;
-  let activeCard = null;
-  let lightboxReturn = null;
+  let returnTargets = [];
+  let folder = null;
 
   const showPhoto = index => {
     activeIndex = (index + photos.length) % photos.length;
@@ -98,96 +86,120 @@ document.addEventListener('DOMContentLoaded', () => {
     lightboxCaption.textContent = `${photo.alt} · ${activeIndex + 1} / ${photos.length}`;
   };
 
-  const openLightbox = index => {
+  const openLightbox = (list, index, targets) => {
+    photos = list;
+    returnTargets = targets;
     showPhoto(index);
     lightbox.classList.add('active');
+    document.body.classList.add('is-lightbox-open');
     closeButton.focus({ preventScroll: true });
   };
 
   const closeLightbox = () => {
     lightbox.classList.remove('active');
-    if (lightboxReturn) {
-      document.body.classList.remove('is-lightbox-open');
-      lightboxReturn[activeIndex]?.focus({ preventScroll: true });
-      lightboxReturn = null;
-    } else {
-      folderGrid.children[activeIndex]?.focus({ preventScroll: true });
-    }
+    if (!folder || !folder.classList.contains('active')) document.body.classList.remove('is-lightbox-open');
+    returnTargets[activeIndex]?.focus({ preventScroll: true });
   };
 
-  const spaceGrid = document.querySelector('.space-grid');
-  if (spaceGrid) {
-    const spaceThumbs = Array.from(spaceGrid.querySelectorAll('.folder-thumb'));
-    const spacePhotos = spaceThumbs.map(button => ({ src: button.dataset.full, alt: spaceGrid.dataset.title }));
-    spaceThumbs.forEach((button, index) => {
-      button.addEventListener('click', () => {
-        photos = spacePhotos;
-        lightboxReturn = spaceThumbs;
-        document.body.classList.add('is-lightbox-open');
-        openLightbox(index);
-      });
-    });
-  }
-
-  const openFolder = card => {
-    activeCard = card;
-    const { slug, count, base } = card.dataset;
-    const title = card.querySelector('h3').textContent;
-    photos = Array.from({ length: Number(count) }, (_, i) => {
-      const file = String(i + 1).padStart(3, '0') + '.jpg';
-      return { src: `${base}${slug}/${file}`, thumb: `${base}${slug}/thumbs/${file}`, alt: title };
-    });
-    folderTitle.textContent = title;
-    folderCount.textContent = `${count} ${Number(count) === 1 ? t.photo : t.photos}`;
-    folderGrid.innerHTML = '';
-    photos.forEach((photo, index) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'folder-thumb';
-      button.innerHTML = `<img loading="lazy" src="${photo.thumb}" alt="${photo.alt} ${index + 1}">`;
-      button.addEventListener('click', () => openLightbox(index));
-      folderGrid.appendChild(button);
-    });
-    folder.scrollTop = 0;
-    folder.classList.add('active');
-    document.body.classList.add('is-lightbox-open');
-    folderClose.focus({ preventScroll: true });
-  };
-
-  const closeFolder = () => {
-    folder.classList.remove('active');
-    document.body.classList.remove('is-lightbox-open');
-    activeCard?.focus({ preventScroll: true });
-  };
-
-  categoryCards.forEach(card => {
-    card.tabIndex = 0;
-    card.setAttribute('role', 'button');
-    card.addEventListener('click', () => openFolder(card));
-    card.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        openFolder(card);
-      }
-    });
-  });
-
-  folderClose.addEventListener('click', closeFolder);
-  folder.addEventListener('click', event => {
-    if (event.target === folder) closeFolder();
-  });
   closeButton.addEventListener('click', closeLightbox);
   lightbox.querySelector('.lightbox-prev').addEventListener('click', () => showPhoto(activeIndex - 1));
   lightbox.querySelector('.lightbox-next').addEventListener('click', () => showPhoto(activeIndex + 1));
   lightbox.addEventListener('click', event => {
     if (event.target === lightbox) closeLightbox();
   });
+
+  // In-page galleries: plain links to the full photos, upgraded to the lightbox
+  galleries.forEach(gallery => {
+    const links = Array.from(gallery.querySelectorAll('a.folder-thumb'));
+    const list = links.map(link => ({ src: link.href, alt: gallery.dataset.title }));
+    links.forEach((link, index) => {
+      link.addEventListener('click', event => {
+        event.preventDefault();
+        openLightbox(list, index, links);
+      });
+    });
+  });
+
+  // Folder overlay for the category cards
+  let closeFolder = () => {};
+  if (categoryCards.length) {
+    folder = createDialog('folder-view', `
+      <div class="folder-panel">
+        <div class="folder-head">
+          <div><p class="eyebrow folder-count"></p><h2 class="folder-title"></h2></div>
+          <button class="folder-close" type="button" aria-label="${t.close}">×</button>
+        </div>
+        <div class="folder-grid"></div>
+      </div>
+    `);
+    const folderTitle = folder.querySelector('.folder-title');
+    const folderCount = folder.querySelector('.folder-count');
+    const folderGrid = folder.querySelector('.folder-grid');
+    const folderClose = folder.querySelector('.folder-close');
+    let activeCard = null;
+
+    const openFolder = card => {
+      activeCard = card;
+      const { slug, count, base } = card.dataset;
+      const title = card.querySelector('h3').textContent;
+      const list = Array.from({ length: Number(count) }, (_, i) => {
+        const file = String(i + 1).padStart(3, '0') + '.jpg';
+        return { src: `${base}${slug}/${file}`, thumb: `${base}${slug}/thumbs/${file}`, alt: title };
+      });
+      folderTitle.textContent = title;
+      folderCount.textContent = `${count} ${Number(count) === 1 ? t.photo : t.photos}`;
+      folderGrid.innerHTML = '';
+      const buttons = list.map((photo, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'folder-thumb';
+        button.innerHTML = `<img loading="lazy" src="${photo.thumb}" alt="${photo.alt} ${index + 1}">`;
+        button.addEventListener('click', () => openLightbox(list, index, buttons));
+        folderGrid.appendChild(button);
+        return button;
+      });
+      folder.scrollTop = 0;
+      folder.classList.add('active');
+      document.body.classList.add('is-lightbox-open');
+      folderClose.focus({ preventScroll: true });
+    };
+
+    closeFolder = () => {
+      folder.classList.remove('active');
+      document.body.classList.remove('is-lightbox-open');
+      activeCard?.focus({ preventScroll: true });
+    };
+
+    categoryCards.forEach(card => {
+      card.tabIndex = 0;
+      card.setAttribute('role', 'button');
+      card.querySelectorAll('a').forEach(link => { link.tabIndex = -1; });
+      card.addEventListener('click', event => {
+        // Ctrl/Cmd/middle click on the title still opens the category page
+        if (event.metaKey || event.ctrlKey || event.shiftKey) return;
+        event.preventDefault();
+        openFolder(card);
+      });
+      card.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openFolder(card);
+        }
+      });
+    });
+
+    folderClose.addEventListener('click', closeFolder);
+    folder.addEventListener('click', event => {
+      if (event.target === folder) closeFolder();
+    });
+  }
+
   document.addEventListener('keydown', event => {
     if (lightbox.classList.contains('active')) {
       if (event.key === 'Escape') closeLightbox();
       if (event.key === 'ArrowLeft') showPhoto(activeIndex - 1);
       if (event.key === 'ArrowRight') showPhoto(activeIndex + 1);
-    } else if (folder.classList.contains('active') && event.key === 'Escape') {
+    } else if (folder && folder.classList.contains('active') && event.key === 'Escape') {
       closeFolder();
     }
   });

@@ -284,3 +284,21 @@ section[id] { scroll-margin-top: 80px; }
 .space-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.8rem; max-width: 1280px; margin: 0 auto; }
 .space-grid .folder-thumb { border-radius: var(--border-radius); }
 @media (max-width: 900px) { .space-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; } }
+
+.section-header h2.section-kicker { font-family: var(--font-body); color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.78rem; font-weight: 600; line-height: 1.6; margin-bottom: var(--spacing-sm); }
+a.folder-thumb { display: block; }
+.page-hero::before { background: linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(180deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 48px 48px; }
+.page-hero h1 { font-size: clamp(2rem, 4.5vw, 3.6rem); }
+.page-hero .page-hero-note { margin-top: var(--spacing-md); font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-accent); }
+.breadcrumb { font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-light); margin-bottom: var(--spacing-md); }
+.breadcrumb a:hover { color: var(--color-accent); }
+.category-page { padding-top: var(--spacing-xl); padding-bottom: var(--spacing-xl); }
+.category-page::before { display: none; }
+.category-page .folder-grid { max-width: 1280px; margin: 0 auto; }
+.category-actions { justify-content: center; }
+.category-links { max-width: 980px; margin: var(--spacing-xl) auto 0; text-align: center; }
+.category-links h2 { font-size: 1.5rem; margin-bottom: var(--spacing-md); }
+.category-links ul { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; }
+.category-links a { display: inline-block; padding: 0.55rem 1rem; border: 1px solid var(--color-line); border-radius: 999px; font-size: 0.9rem; color: var(--color-text-light); }
+.category-links a:hover { border-color: var(--color-accent); color: var(--color-text); }
+@media (max-width: 600px) { .page-hero { padding-top: 120px; padding-bottom: 56px; } .section-header h2.section-kicker { font-size: 0.78rem; } }
