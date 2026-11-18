@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let photos = [];
   let activeIndex = 0;
   let activeCard = null;
+  let lightboxReturn = null;
 
   const showPhoto = index => {
     activeIndex = (index + photos.length) % photos.length;
@@ -105,8 +106,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const closeLightbox = () => {
     lightbox.classList.remove('active');
-    folderGrid.children[activeIndex]?.focus({ preventScroll: true });
+    if (lightboxReturn) {
+      document.body.classList.remove('is-lightbox-open');
+      lightboxReturn[activeIndex]?.focus({ preventScroll: true });
+      lightboxReturn = null;
+    } else {
+      folderGrid.children[activeIndex]?.focus({ preventScroll: true });
+    }
   };
+
+  const spaceGrid = document.querySelector('.space-grid');
+  if (spaceGrid) {
+    const spaceThumbs = Array.from(spaceGrid.querySelectorAll('.folder-thumb'));
+    const spacePhotos = spaceThumbs.map(button => ({ src: button.dataset.full, alt: spaceGrid.dataset.title }));
+    spaceThumbs.forEach((button, index) => {
+      button.addEventListener('click', () => {
+        photos = spacePhotos;
+        lightboxReturn = spaceThumbs;
+        document.body.classList.add('is-lightbox-open');
+        openLightbox(index);
+      });
+    });
+  }
 
   const openFolder = card => {
     activeCard = card;
